@@ -1,0 +1,12 @@
+.location,
+.time {
+  color: #414b5a;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.time {
+  font-weight: 300;
+  margin-bottom: 2rem;
+}

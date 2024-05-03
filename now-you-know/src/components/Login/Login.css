@@ -1,0 +1,77 @@
+.SignUpMain {
+  min-height: 100vh;
+  background-color: #2148c0;
+  font-size: 14px;
+  color: #fff;
+  font-family: Montserrat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ellipse-icon {
+  position: absolute;
+  width: 30%;
+  left: 0;
+  bottom: 0;
+}
+.vector-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+}
+form > div {
+  position: relative;
+}
+.group-icon {
+  width: 25.8%;
+  margin-bottom: 2rem;
+}
+.loginMain svg {
+  position: absolute;
+  top: 25%;
+  left: 5%;
+  transform: translate(0%, -50%);
+}
+.form input {
+  background-color: transparent !important;
+  border: 1px solid white;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 1rem 3rem;
+  margin-bottom: 2.5rem;
+  width: 350px;
+  height: 45px;
+  color: #fff;
+  font-weight: 300;
+  cursor: pointer;
+}
+.form input::placeholder {
+  color: #fff;
+  font-weight: 200;
+  text-transform: uppercase;
+  font-family: "Montserrat";
+  font-size: 0.6rem;
+  text-align: left !important;
+}
+.form input:active {
+  border: none;
+  background-color: transparent;
+}
+
+.login-btn {
+  font-size: 16px;
+  color: #2148c0;
+  text-transform: uppercase;
+  font-weight: 600;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+  padding: 0.5rem 7rem;
+  width: 100%;
+}
+.forgot-password {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: right;
+  margin-top: 1rem;
+}
