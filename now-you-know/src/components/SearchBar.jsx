@@ -4,17 +4,22 @@ import axios from "axios";
 
 const api_key = "763dbdcdd580d6304155bb98ee4f28b7";
 
-const SearchBar = ({ weatherInfoProp }) => {
+const SearchBar = ({
+  weatherInfoProp,
+  loadDefaultCheck,
+  setloadDefaultCheck,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = () => {
     console.log("Search term:", searchTerm);
+    setloadDefaultCheck(false);
     axios
       .get(
         `https://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&appid=${api_key}&units=metric`
       )
       .then((response) => {
-        weatherInfoProp.setWeatherInfo(response.data);
+        weatherInfoProp.setWeatherInfo(response);
         {
           console.log(weatherInfoProp.get());
         }

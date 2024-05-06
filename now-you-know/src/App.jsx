@@ -20,10 +20,16 @@ function useWeatherState() {
 
 function App() {
   const { loggedIn } = useContext(AuthContext);
-  console.log(AuthProvider);
   const weatherState = useWeatherState();
   const [loadDefaultCheck, setLoadDefaultCheck] = useState(false);
+  // const [LoadingCheck, setLoadingCheck] = useState("default");
   const api_key = "763dbdcdd580d6304155bb98ee4f28b7";
+
+  useEffect(() => {
+    if (weatherState.get()) {
+      setLoadDefaultCheck(true);
+    }
+  }, [weatherState.get()]);
 
   useEffect(() => {
     //Runs only on the first render
@@ -33,7 +39,6 @@ function App() {
       )
       .then((response) => {
         weatherState.setWeatherInfo(response);
-        setLoadDefaultCheck(true);
       })
       .catch(function (error) {
         console.log(error);
@@ -42,15 +47,28 @@ function App() {
 
   return (
     <>
-      {console.log(loggedIn)}
       {loggedIn ? (
         loadDefaultCheck ? (
           <div className="rootMain">
             <div className="appMain">
-              <SearchBar weatherInfoProp={weatherState} />
-              <Heading weatherInfoProp={weatherState} />
-              <WeatherSummary weatherInfoProp={weatherState} />
-              <WeatherDetails weatherInfoProp={weatherState} />
+              <SearchBar
+                weatherInfoProp={weatherState}
+                loadDefaultCheck={loadDefaultCheck}
+                setloadDefaultCheck={setLoadDefaultCheck}
+              />
+              <Heading
+                weatherInfoProp={weatherState}
+                loadDefaultCheck={loadDefaultCheck}
+                setloadDefaultCheck={setLoadDefaultCheck}
+              />
+              <WeatherSummary
+                weatherInfoProp={weatherState}
+                loadDefaultCheck={loadDefaultCheck}
+              />
+              <WeatherDetails
+                weatherInfoProp={weatherState}
+                loadDefaultCheck={loadDefaultCheck}
+              />
             </div>
           </div>
         ) : (
