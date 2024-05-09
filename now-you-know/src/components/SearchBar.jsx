@@ -20,9 +20,6 @@ const SearchBar = ({
       )
       .then((response) => {
         weatherInfoProp.setWeatherInfo(response);
-        {
-          console.log(weatherInfoProp.get());
-        }
       })
       .catch(function (error) {
         console.log(error);

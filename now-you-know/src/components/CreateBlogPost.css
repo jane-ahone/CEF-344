@@ -1,0 +1,8 @@
+.createBlogPostMain {
+  background-color: white;
+  margin-top: 1rem;
+}
+
+.createBlogPostMain label {
+  display: block;
+}

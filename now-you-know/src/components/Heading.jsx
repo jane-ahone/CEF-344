@@ -5,7 +5,6 @@ const Heading = ({ weatherInfoProp }) => {
   const date = new Date();
   const time = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
   const weatherInfo = weatherInfoProp.get();
-  console.log(weatherInfo);
   return (
     <div className="headingMain">
       <p className="location">{weatherInfo.data.name}</p>

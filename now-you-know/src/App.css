@@ -8,10 +8,11 @@
   height: auto;
 }
 .rootMain {
+  flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
   background-color: #0d6dbb;
   background-image: url("../src/assets/weather-app-bg.jpg");
 }
