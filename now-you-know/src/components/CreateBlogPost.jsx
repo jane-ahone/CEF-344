@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import "./CreateBlogPost.css";
 
-const CreateBlogPost = () => {
+const CreateBlogPost = ({ blogpost }) => {
   const [values, setValues] = useState({
     title: "",
     content: "",
@@ -14,21 +14,15 @@ const CreateBlogPost = () => {
       .post("http://localhost:3000/posts", values)
       .then((res) => {
         console.log(res);
-      })
-      .then((err) => console.log(err));
-
-    //Making API call for all existing blogs
-
-    axios
-      .get("http://localhost:3000/blogdata")
-      .then((res) => {
-        console.log(res);
+        const prevPost = blogpost.get();
+        prevPost.isEditing = false;
+        blogpost.set([...prevPost, res.data.data]);
       })
       .then((err) => console.log(err));
   };
   return (
     <div className="createBlogPostMain">
-      <p>Quick Draft</p>
+      <h2>Jane's Blog</h2>
       <label htmlFor="title">Title</label>
       <input
         required

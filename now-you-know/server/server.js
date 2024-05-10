@@ -87,26 +87,49 @@ app.post("/login", (req, res) => {
 
 app.post("/posts", (req, res) => {
   if (getCurrentUser() == null) {
-    console.log(getCurrentUser());
     return res.status(404).json({ error: "User is not logged in" });
   }
   const query =
-    "INSERT INTO blogpost(userid,posttitle,postcontent) VALUES($1,$2,$3)";
+    "INSERT INTO blogpost(userid,posttitle,postcontent) VALUES($1,$2,$3) RETURNING userid,postid,posttitle,postcontent";
   const values = [getCurrentUser().userid, req.body.title, req.body.content];
+
   db.query(query, values, (err, result) => {
     if (err) {
       console.error("Error executing query", err);
       return res
         .status(500)
-        .json({ error: "Error getting data from the server" });
+        .json({ error: "Error sending blog data to the server" });
     }
-    return res.status(200).json({ status: "success" });
+
+    const queryname =
+      "SELECT username FROM userinfo WHERE userinfo.userid = $1";
+    const values = [result.rows[0].userid];
+
+    db.query(queryname, values, (err, resultname) => {
+      if (err) {
+        console.error("Error executing query", err);
+        return res
+          .status(500)
+          .json({ error: "Error getting username from the server" });
+      }
+
+      const newBlogPost = {
+        userid: result.rows[0].userid,
+        username: resultname.rows[0].username,
+        posttitle: result.rows[0].posttitle,
+        postcontent: result.rows[0].postcontent,
+        postid: result.rows[0].postid,
+        datetime: new Date(),
+      };
+      return res.status(200).json({ status: "success", data: newBlogPost });
+    });
   });
 });
 
 app.get("/blogdata", (req, res) => {
   const query =
-    "SELECT username, posttitle, postcontent, datetime  FROM blogpost, userinfo WHERE blogpost.userid = userinfo.userid;";
+    "SELECT blogpost.userid, username,postid, posttitle, postcontent, datetime FROM blogpost, userinfo WHERE blogpost.userid = userinfo.userid;";
+
   db.query(query, (err, result) => {
     if (err) {
       console.error("Error executing query", err);
@@ -114,8 +137,53 @@ app.get("/blogdata", (req, res) => {
         .status(500)
         .json({ error: "Error getting data from the server" });
     }
-    setExistingPost(result);
-    return res.status(200).json({ status: "success" });
+
+    return res.status(200).json({ status: "success", data: result.rows });
+  });
+});
+
+app.put("/blogposts/:id", (req, res) => {
+  const postId = req.params.id;
+  const { title, content } = req.body;
+
+  const query =
+    "UPDATE blogpost SET posttitle = $1, postcontent = $2 WHERE postid = $3";
+  const values = [title, content, postId];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Error executing query", err);
+      return res.status(500).json({ error: "Error updating blog post" });
+    }
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ status: "success", message: "Blog post updated successfully" });
+  });
+});
+
+app.delete("/blogposts/:id", (req, res) => {
+  const postId = req.params.id;
+  const query = "DELETE FROM blogpost WHERE postid = $1";
+  const values = [postId];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Error executing query", err);
+      return res.status(500).json({ error: "Error deleting blog post" });
+    }
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ status: "success", message: "Blog post deleted successfully" });
   });
 });
 

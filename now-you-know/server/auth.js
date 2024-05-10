@@ -13,7 +13,8 @@ function getCurrentUser() {
 let existingPost = [null];
 
 function setExistingPost(postData) {
-  existingPost = postData;
+  console.log("postData:", postData);
+  existingPost.push(postData);
 }
 
 function getExistingPost() {

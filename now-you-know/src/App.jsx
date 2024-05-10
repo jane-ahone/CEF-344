@@ -9,6 +9,7 @@ import CreateBlogPost from "./components/CreateBlogPost";
 import { useState, useEffect, useContext } from "react";
 import CircularIndeterminate from "./components/CircularIndeterminate";
 import axios from "axios";
+import DisplayBlogPost from "./components/DisplayBlogPost";
 
 function useWeatherState() {
   const [weatherInfo, setWeatherInfo] = useState(null);
@@ -18,11 +19,21 @@ function useWeatherState() {
 
   return { get, setWeatherInfo };
 }
+function useExistingPost() {
+  const [exitingPost, set] = useState([null]);
+  const get = () => {
+    return exitingPost;
+  };
+
+  return { get, set };
+}
 
 function App() {
   const { loggedIn } = useContext(AuthContext);
   const weatherState = useWeatherState();
+  const exitingPosts = useExistingPost();
   const [loadDefaultCheck, setLoadDefaultCheck] = useState(false);
+
   // const [LoadingCheck, setLoadingCheck] = useState("default");
   const api_key = "763dbdcdd580d6304155bb98ee4f28b7";
 
@@ -33,15 +44,19 @@ function App() {
   }, [weatherState.get()]);
 
   useEffect(() => {
-    //Runs only on the first render
     //Making API call for all existing blogs
-
     axios
       .get("http://localhost:3000/blogdata")
       .then((res) => {
         console.log(res);
+        exitingPosts.set(res.data.data);
       })
       .then((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    //Runs only on the first render
+
     //Making weather API call for Buea(default)
     axios
       .get(
@@ -82,7 +97,8 @@ function App() {
                 />
               </div>
             </div>
-            <CreateBlogPost />
+            <CreateBlogPost blogpost={exitingPosts} />
+            <DisplayBlogPost blogpost={exitingPosts} />
           </>
         ) : (
           <>
