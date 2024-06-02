@@ -10,6 +10,10 @@ import { useState, useEffect, useContext } from "react";
 import CircularIndeterminate from "./components/CircularIndeterminate";
 import axios from "axios";
 import DisplayBlogPost from "./components/DisplayBlogPost";
+import { gapi } from "gapi-script";
+
+const clientId =
+  "1060827309369-9ltp1clj1dpoissuioahovdlku2ejrcq.apps.googleusercontent.com";
 
 function useWeatherState() {
   const [weatherInfo, setWeatherInfo] = useState(null);
@@ -34,8 +38,17 @@ function App() {
   const exitingPosts = useExistingPost();
   const [loadDefaultCheck, setLoadDefaultCheck] = useState(false);
 
-  // const [LoadingCheck, setLoadingCheck] = useState("default");
   const api_key = "763dbdcdd580d6304155bb98ee4f28b7";
+
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: "",
+      });
+    }
+    gapi.load("Client:Auth2", start);
+  });
 
   useEffect(() => {
     if (weatherState.get()) {

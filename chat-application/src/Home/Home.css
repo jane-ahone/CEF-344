@@ -1,0 +1,9 @@
+.homeMain {
+  display: grid;
+  grid-template-columns: 0.1fr 0.7fr 2fr;
+  column-gap: 1rem;
+}
+.homeMain > * {
+  height: 100vh;
+  overflow: hidden;
+}

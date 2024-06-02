@@ -1,5 +1,3 @@
-import React from "react";
-
 let currentUser = null;
 
 function setCurrentUser(user) {

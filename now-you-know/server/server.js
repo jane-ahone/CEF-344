@@ -55,6 +55,7 @@ app.post("/", (req, res) => {
   });
 });
 
+//Login logic
 app.post("/login", (req, res) => {
   const query = "SELECT * FROM userInfo WHERE username = $1";
   const values = [req.body.name];
@@ -85,7 +86,9 @@ app.post("/login", (req, res) => {
   });
 });
 
+//Inserting post into database
 app.post("/posts", (req, res) => {
+  console.log("Current user", getCurrentUser());
   if (getCurrentUser() == null) {
     return res.status(404).json({ error: "User is not logged in" });
   }
@@ -126,6 +129,7 @@ app.post("/posts", (req, res) => {
   });
 });
 
+//Display blog data
 app.get("/blogdata", (req, res) => {
   const query =
     "SELECT blogpost.userid, username,postid, posttitle, postcontent, datetime FROM blogpost, userinfo WHERE blogpost.userid = userinfo.userid;";

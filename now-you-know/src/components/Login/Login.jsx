@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "react-google-login";
 import { AuthContext } from "../AuthProvider";
 import { useContext } from "react";
 import axios from "axios";
+
+const clientId =
+  "1060827309369-9ltp1clj1dpoissuioahovdlku2ejrcq.apps.googleusercontent.com";
 
 const Login = () => {
   const { setLoggedIn } = useContext(AuthContext);
@@ -32,6 +36,14 @@ const Login = () => {
           alert("Invalid credentials");
         }
       });
+  };
+  const onSuccess = (res) => {
+    console.log("Login Success. Current user:", res.profileObj);
+    setLoggedIn(true);
+    navigate("/main");
+  };
+  const onFailure = (res) => {
+    console.log("Login Failed res:", res);
   };
   return (
     <div className="loginMain">
@@ -123,6 +135,15 @@ const Login = () => {
         </div>
         <div className="login-btnn">
           <button className="login-btn">Login </button>
+        </div>
+        <div className="loginBtnGoogle">
+          <GoogleLogin
+            clientId={clientId}
+            buttonText="Login"
+            onSuccess={onSuccess}
+            onFailure={onFailure}
+            cookiePolicy={"single_host_origin"}
+          />
         </div>
         <div className="forgot-password">Forgot password?</div>
         <div className="forgot-password">
