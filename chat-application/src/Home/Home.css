@@ -1,7 +1,8 @@
 .homeMain {
   display: grid;
-  grid-template-columns: 0.1fr 0.7fr 2fr;
+  grid-template-columns: 0.1fr 0.9fr 1fr;
   column-gap: 1rem;
+  background-color: white;
 }
 .homeMain > * {
   height: 100vh;

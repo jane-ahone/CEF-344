@@ -1,16 +1,26 @@
 .previewMessagesMain {
   font-family: "IBM Plex Sans";
-  background: #fff;
   box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.08);
 }
 .pMMusers {
-  font-size: 0.8rem;
+  margin-top: 1.5rem;
+  margin-left: 2rem;
+  font-size: 2rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
 }
 
+.pMMusers .class {
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
 .messages {
-  line-height: 150%;
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 3rem;
+  color: #02372f;
+  text-align: center;
+  margin-top: 2rem;
 }
 
 .content {
@@ -20,16 +30,28 @@
 
 .header {
   border: solid;
-  border-color: #edf2f7;
+  border-color: #05342d66;
   border-width: 0 0 2px 0;
+  background-color: #05342d66;
 }
 
-.message-list {
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0px 16px;
-  gap: 8px;
+.circle-user {
+  background-color: #00000014;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  margin-right: 3rem;
+}
+.username {
+  display: inline-block;
+}
+.frame-child {
+  width: 10px;
+  position: relative;
+  border-radius: 50%;
+  background-color: #68d391;
+  height: 10px;
+  display: inline-block;
+  margin-left: 0.5rem;
 }

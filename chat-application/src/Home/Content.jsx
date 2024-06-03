@@ -3,35 +3,30 @@ import { useEffect } from "react";
 import "./Content.css";
 
 const Content = ({ currSelectUser, currLoggedInUser, socket }) => {
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState([]);
   const [messageHistory, setMessageHistory] = useState();
-  const [arrivalMessage, setArrivalMessage] = useState();
+  const [arrivalMessage, setArrivalMessage] = useState([]);
+  const [sentMessage, setSentMessage] = useState([]);
 
   const selectUser = currSelectUser.get();
   const user = currLoggedInUser.get();
 
   const handleClick = () => {
-    console.log(
-      "Sending from",
-      user[1][1],
-      user[5][1],
-      "Receiving from",
-      selectUser[0].username,
-      selectUser[0].socket_id
-    );
     socket.emit(
       "sendMessage",
-      { sender: user[5][1], recipient: selectUser[0].socket_id, message },
+      { sender: user[1], recipient: selectUser[0][5], message },
       (response) => {
         console.log(response.status);
       }
     );
+    const aboutSentMessage = ["Sent-Message", message];
+    setArrivalMessage((prevMessages) => [...prevMessages, aboutSentMessage]);
   };
 
   useEffect(() => {
     socket.on("receiveMessage", (data) => {
       console.log("Received message:", data);
-      setArrivalMessage(data);
+      setArrivalMessage((prevMessages) => [...prevMessages, data]);
     });
 
     // Cleanup the effect
@@ -53,27 +48,42 @@ const Content = ({ currSelectUser, currLoggedInUser, socket }) => {
   return (
     <div className="contentMain">
       <div className="top-content">
-        <div className="panel-header">
-          <div className="user-content">
-            <div className="top-content">
-              <div className="florencio-dorrance">
-                {selectUser ? selectUser[0].username : "Default"}
-                <span className="frame-child"></span>
-              </div>
-            </div>
+        <div className="user-content">
+          <div className="florencio-dorrance">
+            {selectUser ? selectUser[0][1] : "Default"}
           </div>
         </div>
       </div>
       <div className="message-box">
-        <div className="type-a-message">
-          <input
-            type="text"
-            id="myInput"
-            placeholder="Enter some text"
-            onChange={(e) => setMessage(e.target.value)}
-          />{" "}
-          <button onClick={handleClick}>Submit</button>
+        <div className="message-list">
+          {arrivalMessage.map((messageArray, outerIndex) => (
+            <>
+              {messageArray[0] == "Sent-Message" ? (
+                <p key={outerIndex} className="message-item">
+                  {" "}
+                  {messageArray[1]}{" "}
+                </p>
+              ) : (
+                <p
+                  key={outerIndex}
+                  className="message-item"
+                  style={{ alignSelf: "end" }}
+                >
+                  {messageArray[1]}{" "}
+                </p>
+              )}
+            </>
+          ))}
         </div>
+      </div>
+      <div className="type-a-message">
+        <input
+          type="text"
+          id="myInput"
+          placeholder="Enter some text"
+          onChange={(e) => setMessage(e.target.value)}
+        />{" "}
+        <button onClick={handleClick}>Submit</button>
       </div>
     </div>
   );

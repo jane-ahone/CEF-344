@@ -10,6 +10,7 @@ const io = require("socket.io")(server, {
 });
 const cors = require("cors");
 
+//Db connections
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
@@ -17,6 +18,7 @@ const db = new pg.Client({
   password: "zaine",
   port: 5432,
 });
+
 db.connect();
 
 // Middleware
@@ -27,14 +29,24 @@ app.get("/", (req, res) => {
   res.send("Socket.IO server running");
 });
 
-let users = {};
+let users = [];
+let currRoom;
+let roomUsers = [];
+let activeUsers = [];
 
 // Socket.IO connection handling
 
 io.on("connection", (socket) => {
   console.log(`A client connected with id ${socket.id}  `);
-  socket.on("disconnect", (socket) => {
-    console.log(`A client disconnected with id ${socket.id}  `);
+
+  socket.on("disconnect", () => {
+    console.log(`A client disconnected with id ${socket.id}`);
+
+    // Remove user from activeUsers array
+    activeUsers = activeUsers.filter((user) => user[5] !== socket.id);
+
+    // Broadcast updated activeUsers list
+    io.emit("updateActiveUsers", activeUsers);
   });
 
   socket.on("register", (username, email, password, callback) => {
@@ -49,19 +61,19 @@ io.on("connection", (socket) => {
           }
 
           const loggedInUser = result.rows[0]; // Access the first row of the result
-          console.log(loggedInUser);
-          users[username] = socket.id;
-          socket.username = username;
+          activeUsers.push(Object.values(loggedInUser));
+
           console.log(`User registered: ${username}`);
 
           // Return the loggedInUser information via callback
           callback({
             status: "Registration succesful",
-            user: Object.entries(loggedInUser),
+            user: Object.values(loggedInUser),
+            onlineUsers: activeUsers,
           });
 
           // Optionally notify other clients
-          // socket.broadcast.emit('userRegistered', loggedInUser);
+          socket.broadcast.emit("newUser", activeUsers);
         }
       );
     } catch (err) {
@@ -73,25 +85,6 @@ io.on("connection", (socket) => {
   });
 
   let allUsers;
-
-  socket.on("fetchusers", (callback) => {
-    try {
-      db.query("SELECT id, username, socket_id FROM users;", (err, result) => {
-        if (err) {
-          console.error("Error fetching data:", err);
-        }
-        allUsers = result.rows;
-        socket.emit("returnUsers", allUsers);
-      });
-
-      // Send message history to the client
-    } catch (err) {
-      console.error(err);
-    }
-    callback({
-      status: "Fetch succesful",
-    });
-  });
 
   socket.on("fetchmessages", (sender_id, receiver_id, callback) => {
     try {
@@ -116,12 +109,74 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", ({ sender, recipient, message }, callback) => {
-    console.log(sender, "\n", recipient, "\n", message);
-    io.to(recipient).emit("receiveMessage", {
-      sender,
-      message,
-    });
+    date = new Date();
+    io.to(recipient).emit("receiveMessage", [sender, message, date]);
     callback({ status: "Message sent" });
+  });
+
+  socket.on("joinRoom", ({ username, selectedRoom }, callback) => {
+    currRoom = selectedRoom;
+    id = socket.id;
+    const user = { id, username, selectedRoom };
+    roomUsers.push(user);
+
+    socket.join(selectedRoom);
+    db.query(
+      "INSERT INTO chat_rooms(name,room_name) VALUES($1,$2)",
+      [username, selectedRoom],
+      (err, result) => {
+        if (err) {
+          console.error("Error inserting data for create room function:", err);
+        }
+      }
+    );
+    console.log(
+      `User ${username} with ${socket.id} joined room: ${selectedRoom}`
+    );
+    callback({
+      status: "Joined room successfully",
+      data: [username, selectedRoom],
+    });
+    socket.emit("infoMessage", `Welcome to ${selectedRoom}!`);
+
+    // Broadcast when a user connects
+    socket.broadcast
+      .to(selectedRoom)
+      .emit("infoMessage", `${username} has joined the chat`);
+
+    // Runs when client disconnects
+    socket.on("disconnect", () => {
+      io.to(selectedRoom).emit("infoMessage", `${username} has left the chat`);
+      db.query(
+        "DELETE FROM chat_rooms WHERE name = $1",
+        [username],
+        (err, result) => {
+          if (err) {
+            console.error("Error deleting user from chatrooms:", err);
+          }
+        }
+      );
+    });
+  });
+
+  //Chat message
+  socket.on("groupMessage", (userMessage) => {
+    id = socket.id;
+    const user = roomUsers.find((user) => user.id === id);
+    date = new Date();
+    io.to(user.selectedRoom).emit("message", [
+      user.username,
+      userMessage,
+      date,
+      ,
+    ]);
+  });
+  //Chat message
+  socket.on("getOnlineUsers", (callback) => {
+    callback({
+      status: "Fetch Message succesful",
+      data: roomUsers,
+    });
   });
 
   //   socket.on(
@@ -159,3 +214,8 @@ const port = 3000;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+module.exports = {
+  currRoom,
+  users,
+};

@@ -16,12 +16,9 @@ const Welcome = () => {
       </p>
 
       <div className="rectangle-parent">
-        <b className="agree-and-continue">
-          {" "}
-          <Link className="link" to={`login`}>
-            Agree and Continue{" "}
-          </Link>
-        </b>
+        <Link className="link" to={`login`}>
+          <b className="agree-and-continue"> Agree and Continue </b>
+        </Link>
       </div>
     </div>
   );

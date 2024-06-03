@@ -7,6 +7,17 @@ import Welcome from "./Welcome/Welcome.jsx";
 import Group from "./Groups/Group.jsx";
 import GroupChat from "./Groups/GroupChat.jsx";
 
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3000");
+socket.on("connect", () => {
+  console.log(`You connected with id: ${socket.id}`);
+});
+
+socket.on("disconnect", () => {
+  console.log(`You disconnected with id: ${socket.id}`);
+});
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -14,20 +25,20 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <App />,
+    element: <App socket={socket} />,
   },
 
   {
     path: "/home",
-    element: <App />,
+    element: <App socket={socket} />,
   },
   {
     path: "/group",
-    element: <Group />,
+    element: <Group socket={socket} />,
   },
   {
     path: "/groupchat",
-    element: <GroupChat />,
+    element: <GroupChat socket={socket} />,
   },
 ]);
 

@@ -25,7 +25,7 @@
   background-color: #095338;
 }
 .rectangle-parent {
-  margin-top: 1rem;
+  margin-top: 3em;
   cursor: pointer;
   color: #fff;
 }
@@ -46,4 +46,7 @@
 a,
 .link {
   all: unset;
+}
+p {
+  margin-top: 1rem;
 }

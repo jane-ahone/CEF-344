@@ -5,18 +5,22 @@
   --success-color: #5cb85c;
   --error-color: #d9534f;
 }
-
+/* 
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
-}
+} */
 
-body {
+.groupMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   background: var(--light-color);
-  margin: 20px;
+  height: 100vh;
+  color: #fff;
 }
 
 ul {
@@ -126,11 +130,8 @@ a {
 
 /* Join Page */
 .join-container {
-  max-width: 500px;
-  margin: 80px auto;
-  color: #fff;
+  width: 50%;
 }
-
 .join-header {
   text-align: center;
   padding: 20px;

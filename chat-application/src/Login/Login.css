@@ -10,7 +10,7 @@
 .login-main {
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 40%;
   padding: 3rem 5rem;
   border-radius: 4px;
   background: #fff;
@@ -19,7 +19,7 @@
 
 .starter,
 .login-btn-text {
-  color: #292929;
+  color: #2c8b7d;
   font-family: Inter;
   font-size: 3rem;
   font-weight: 700;
@@ -37,7 +37,7 @@
 }
 input {
   border-radius: 4px;
-  border: 1px solid #0e53a2;
+  border: 1px solid #53827b92;
   padding: 1rem 2rem;
   min-width: 60%;
   margin-bottom: 2rem;
@@ -60,5 +60,5 @@ input::placeholder {
   text-align: center;
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
-  background: #0366ff;
+  background: #02372f;
 }

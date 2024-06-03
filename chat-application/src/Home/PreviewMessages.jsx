@@ -6,40 +6,38 @@ const PreviewMessages = ({
   currSelectUser,
   currLoggedInUser,
   socket,
+  activeUsers,
 }) => {
   const handleCurrSelectUser = (event) => {
-    const currUserInfo = allUserProp
-      .get()
-      .filter((user) => user.username == event.target.innerText);
+    const currUserInfo = activeUsers.get().filter((user) => {
+      return user[1].trim() === event.target.innerText.trim();
+    });
     currSelectUser.setCurrSelectUser(currUserInfo);
   };
-
-  useEffect(() => {
-    socket.emit("fetchusers", (response) => {
-      console.log(response.status);
-    });
-
-    socket.on("returnUsers", (user) => {
-      allUserProp.setUsers(user);
-    });
-  }, []);
 
   return (
     <>
       <div className="previewMessagesMain">
         <div className="header">
-          <p className="messages">Messages</p>
+          <p className="messages">Chats</p>
         </div>
         <div className="pMMusers">
-          {allUserProp.get().map((user, index) => (
-            <p
-              key={index}
-              id="index"
-              className="username"
-              onClick={handleCurrSelectUser}
-            >
-              {user.username}
-            </p>
+          {activeUsers.get().map((user, index) => (
+            <div key={index} className=" class">
+              <span className="circle-user"></span>
+              <p
+                key={index}
+                id="index"
+                className="username"
+                onClick={handleCurrSelectUser}
+              >
+                {user[1]}
+                {currLoggedInUser.get()[1].trim() == user[1].trim() ? (
+                  <span>(Me)</span>
+                ) : null}
+                <span className="frame-child"></span>
+              </p>
+            </div>
           ))}
         </div>
       </div>

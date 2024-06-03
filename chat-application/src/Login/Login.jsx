@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({ loggedInUser, loginState, socket }) => {
+const Login = ({ loggedInUser, loginState, socket, activeUsers }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -35,15 +35,22 @@ const Login = ({ loggedInUser, loginState, socket }) => {
     socket.emit("register", username, email, password, (response) => {
       if (response.status === "Registration succesful") {
         loginState.setLoggedIn(true);
-        // You can now access the loggedInUser data from response.user
         loggedInUser.setLoggedInUser(response.user);
-        ("error here");
+        activeUsers.setActiveUsers(response.onlineUsers);
         navigate("/home");
       } else {
         console.log("Registration failed.");
       }
     });
   };
+
+  useEffect(() => {
+    socket.on("newUser", (user) => {
+      console.log("I heard");
+      activeUsers.setActiveUsers(user);
+    }),
+      [];
+  });
 
   return (
     <div className="login-main-parent">

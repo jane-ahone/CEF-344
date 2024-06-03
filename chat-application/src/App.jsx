@@ -2,17 +2,6 @@ import { useState } from "react";
 import "./App.css";
 import Home from "./Home/Home";
 import Login from "./Login/Login";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000");
-
-socket.on("connect", () => {
-  console.log(`You connected with id: ${socket.id}`);
-});
-
-socket.on("disconnect", () => {
-  console.log(`You disconnected with id: ${socket.id}`);
-});
 
 function useLoggedIn() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -30,20 +19,34 @@ function useLoggedInUsers() {
 
   return { get, setLoggedInUser };
 }
+function useActiveUsers() {
+  const [activeUsers, setActiveUsers] = useState([]);
+  const get = () => {
+    return activeUsers;
+  };
 
-function App() {
+  return { get, setActiveUsers };
+}
+
+function App({ socket }) {
   const loginState = useLoggedIn();
   const currloggedInUser = useLoggedInUsers();
+  const activeUsers = useActiveUsers();
 
   return (
     <>
       {loginState.get() ? (
-        <Home currLoggedInUser={currloggedInUser} socket={socket} />
+        <Home
+          currLoggedInUser={currloggedInUser}
+          socket={socket}
+          activeUsers={activeUsers}
+        />
       ) : (
         <Login
           loginState={loginState}
           loggedInUser={currloggedInUser}
           socket={socket}
+          activeUsers={activeUsers}
         />
       )}
     </>
